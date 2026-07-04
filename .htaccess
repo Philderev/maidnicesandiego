@@ -1,0 +1,81 @@
+# ============================================================
+#  Maid Nice San Diego — Apache configuration
+# ============================================================
+
+Options -Indexes +FollowSymLinks
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # --- Force HTTPS ------------------------------------------
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # --- Force non-www (optional; comment out if you prefer www)
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+    # --- Clean URLs -------------------------------------------
+    # Redirect direct requests for /path/index.html to /path/
+    RewriteCond %{THE_REQUEST} \s/+(.+/)?index\.html[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # Redirect .html requests to their extensionless / directory form
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+    RewriteRule ^ /%1/ [R=301,L]
+
+    # Serve /path/ from /path/index.html (folder pages)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}/index.html -f
+    RewriteRule ^(.+?)/?$ $1/index.html [L]
+
+    # Map extensionless requests to a matching .html file (fallback)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+    RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+# --- Custom error page ----------------------------------------
+ErrorDocument 404 /index.html
+
+# --- Compression ----------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+        application/javascript application/json application/xml \
+        image/svg+xml application/rss+xml font/woff2
+</IfModule>
+
+# --- Browser caching ------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                          "access plus 1 month"
+    ExpiresByType text/html                 "access plus 0 seconds"
+    ExpiresByType text/css                  "access plus 1 year"
+    ExpiresByType application/javascript    "access plus 1 year"
+    ExpiresByType image/jpeg                "access plus 1 year"
+    ExpiresByType image/png                 "access plus 1 year"
+    ExpiresByType image/webp                "access plus 1 year"
+    ExpiresByType image/svg+xml             "access plus 1 year"
+    ExpiresByType image/x-icon              "access plus 1 year"
+    ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+# --- Security headers -----------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header unset X-Powered-By
+    # Long-cache static assets are content-hashed by path; mark immutable
+    <FilesMatch "\.(css|js|woff2|jpg|jpeg|png|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# --- Protect dotfiles -----------------------------------------
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
