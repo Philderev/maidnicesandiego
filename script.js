@@ -299,6 +299,56 @@
     });
   }
 
+  /* ---- GoHighLevel form reliability ----
+     GHL forms render inside iframes that occasionally stall in the browser
+     cache, forcing users to hard-refresh (Ctrl+Shift+R). Two safeguards:
+       1) load form_embed.js with a cache-buster so we never run a stale copy;
+       2) watch each form iframe and, if it hasn't loaded in a few seconds,
+          re-request it with a fresh URL so the user never has to refresh. */
+  (function () {
+    var GHL_HOST = "leadhubb.alegresolutionsgs.com";
+
+    // 1) cache-busted form_embed.js (auto-resizes the form iframes)
+    var embed = document.createElement("script");
+    embed.src = "https://" + GHL_HOST + "/js/form_embed.js?v=" + Date.now();
+    embed.async = true;
+    document.body.appendChild(embed);
+
+    // 2) per-iframe watchdog
+    function watch(iframe) {
+      var base = iframe.getAttribute("src") || iframe.getAttribute("data-src") || "";
+      if (!base || base.indexOf(GHL_HOST) === -1) return;
+
+      var loaded = false, attempts = 0, armed = false;
+      iframe.addEventListener("load", function () { loaded = true; });
+
+      function arm() {
+        if (armed || !iframe.src) return;   // wait until a src is actually set
+        armed = true;
+        setTimeout(function () {
+          if (loaded || attempts >= 2) return;
+          attempts++;
+          armed = false;
+          var sep = base.indexOf("?") === -1 ? "?" : "&";
+          iframe.src = base + sep + "_cb=" + Date.now(); // force a fresh fetch
+          arm();
+        }, 6000);
+      }
+
+      if (iframe.src) { arm(); return; }
+      // lazily-loaded frames (e.g. the modal) get their src later — poll for it
+      var poll = setInterval(function () {
+        if (iframe.src) { clearInterval(poll); arm(); }
+      }, 400);
+      setTimeout(function () { clearInterval(poll); }, 60000);
+    }
+
+    var frames = document.querySelectorAll(
+      'iframe[src*="' + GHL_HOST + '"], iframe[data-src*="' + GHL_HOST + '"]'
+    );
+    Array.prototype.forEach.call(frames, watch);
+  })();
+
   /* ---- Cookie consent banner ---- */
   (function () {
     if (document.cookie.indexOf("cookieConsent=") !== -1) return;
