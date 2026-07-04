@@ -229,7 +229,7 @@
   Array.prototype.slice.call(document.querySelectorAll("form[data-quote]")).forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      window.location.href = "thank-you.html";
+      window.location.href = "thank-you/";
     });
   });
 
