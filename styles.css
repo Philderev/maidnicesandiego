@@ -628,9 +628,9 @@ body.modal-open { overflow: hidden; }
   font-size: .92rem;
   color: var(--ink);
   opacity: .82;
-  transition: opacity .2s ease;
+  transition: opacity .2s ease, color .2s ease;
 }
-.nav-links a:hover { opacity: 1; }
+.nav-links a:hover { opacity: 1; color: #7dc4f0; }
 
 /* nav dropdowns (Services / Service Areas) */
 .nav-links .has-dropdown { position: relative; }
@@ -727,7 +727,9 @@ body.modal-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: .4rem;
+  transition: color .2s ease;
 }
+.nav-phone:hover { color: #7dc4f0; }
 
 /* two-column hero layout */
 .hero-grid {
