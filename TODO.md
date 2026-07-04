@@ -9,8 +9,8 @@ Items below need client confirmation or data that was not available on the live 
 - **Business address** — JSON-LD `PostalAddress` uses locality "Carlsbad, CA" only (no street
   address was available). Add a street address if the business wants full local SEO markup.
 - **Google review count & rating** — the template shipped with "4.9★ / 100+ reviews". We do NOT
-  have the real aggregate. All numbers were changed to reflect the **14 real 5-star reviews**
-  supplied in `/reviews` (rating shown as **5.0**, count **14**). Update `aggregateRating`,
+  have the real aggregate. All numbers were changed to reflect the **65 Google reviews**
+  supplied in `/reviews` (rating shown as **4.9**, count **65**). Update `aggregateRating`,
   the announce bar, hero badge, marquee stats, and coverage-trust rows if the true Google
   totals differ.
 - **BBB accreditation / Thumbtack** — template claimed "BBB A+ Accredited" and "Top-Rated on
