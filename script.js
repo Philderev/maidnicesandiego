@@ -3,6 +3,14 @@
 (function () {
   "use strict";
 
+  /* ---- Site root (works at domain root or a project subpath) ----
+     script.js always lives at the site root, loaded relatively from
+     every page, so its own URL's directory is the site root. */
+  var SITE_ROOT = (function () {
+    var s = document.currentScript;
+    return s ? s.src.replace(/[^\/]*$/, "") : "/";
+  })();
+
   /* ---- Quote widget tabs ---- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll(".quote-tab"));
   var serviceInput = document.getElementById("quote-service");
@@ -300,7 +308,7 @@
     banner.setAttribute("aria-label", "Cookie notice");
     banner.innerHTML =
       '<p class="cookie-banner__text">We use cookies to improve your experience. ' +
-      '<a href="/legal/cookie-policy/">Learn more</a>.</p>' +
+      '<a href="' + SITE_ROOT + 'legal/cookie-policy/">Learn more</a>.</p>' +
       '<button class="cookie-banner__btn" type="button">Got it</button>';
     banner.querySelector("button").addEventListener("click", function () {
       document.cookie = "cookieConsent=1; path=/; max-age=31536000";
