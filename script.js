@@ -307,10 +307,36 @@
           re-request it with a fresh URL so the user never has to refresh. */
   (function () {
     var GHL_HOST = "leadhubb.alegresolutionsgs.com";
+    var frameCount = 0;
+
+    function normalizeFrame(iframe) {
+      var formId = iframe.getAttribute("data-form-id");
+      if (!formId) return;
+
+      frameCount++;
+      if (!iframe.id) iframe.id = "inline-" + formId + "-" + frameCount;
+      if (!iframe.getAttribute("data-layout-iframe-id")) {
+        iframe.setAttribute("data-layout-iframe-id", iframe.id);
+      }
+      if (!iframe.getAttribute("data-height")) {
+        iframe.setAttribute("data-height", "520");
+      }
+      iframe.setAttribute("scrolling", "no");
+    }
+
+    function cacheBust(url) {
+      var sep = url.indexOf("?") === -1 ? "?" : "&";
+      return url + sep + "_cb=" + Date.now();
+    }
+
+    var frames = Array.prototype.slice.call(document.querySelectorAll(
+      'iframe[src*="' + GHL_HOST + '"], iframe[data-src*="' + GHL_HOST + '"]'
+    ));
+    frames.forEach(normalizeFrame);
 
     // 1) cache-busted form_embed.js (auto-resizes the form iframes)
     var embed = document.createElement("script");
-    embed.src = "https://" + GHL_HOST + "/js/form_embed.js?v=" + Date.now();
+    embed.src = cacheBust("https://" + GHL_HOST + "/js/form_embed.js");
     embed.async = true;
     document.body.appendChild(embed);
 
@@ -329,8 +355,7 @@
           if (loaded || attempts >= 2) return;
           attempts++;
           armed = false;
-          var sep = base.indexOf("?") === -1 ? "?" : "&";
-          iframe.src = base + sep + "_cb=" + Date.now(); // force a fresh fetch
+          iframe.src = cacheBust(base); // force a fresh fetch
           arm();
         }, 6000);
       }
@@ -343,10 +368,7 @@
       setTimeout(function () { clearInterval(poll); }, 60000);
     }
 
-    var frames = document.querySelectorAll(
-      'iframe[src*="' + GHL_HOST + '"], iframe[data-src*="' + GHL_HOST + '"]'
-    );
-    Array.prototype.forEach.call(frames, watch);
+    frames.forEach(watch);
   })();
 
   /* ---- Cookie consent banner ---- */

@@ -1828,11 +1828,12 @@ body.modal-open { overflow: hidden; }
   border-radius: var(--r-md);
   overflow: hidden;
   box-shadow: var(--shadow-pop);
+  min-height: 520px;
   height: auto;                 /* auto-sized by form_embed.js to the form's content */
 }
 .cost-cta-form iframe {
   width: 100%;
-  min-height: 520px;            /* fallback before the resize script runs */
+  min-height: 520px !important; /* fallback before the resize script runs */
   border: 0;
   display: block;
 }
