@@ -299,12 +299,10 @@
     });
   }
 
-  /* ---- GoHighLevel form reliability ----
-     GHL forms render inside iframes that occasionally stall in the browser
-     cache, forcing users to hard-refresh (Ctrl+Shift+R). Two safeguards:
-       1) load form_embed.js with a cache-buster so we never run a stale copy;
-       2) watch each form iframe and, if it hasn't loaded in a few seconds,
-          re-request it with a fresh URL so the user never has to refresh. */
+  /* ---- GoHighLevel form setup ----
+     Load the official resize helper once, without touching iframe src after
+     the page or modal starts loading it. Reassigning src after a timeout can
+     make a rendered form blink and load again. */
   (function () {
     var GHL_HOST = "leadhubb.alegresolutionsgs.com";
     var frameCount = 0;
@@ -324,53 +322,21 @@
       iframe.setAttribute("scrolling", "no");
     }
 
-    function cacheBust(url) {
-      var sep = url.indexOf("?") === -1 ? "?" : "&";
-      return url + sep + "_cb=" + Date.now();
-    }
-
     var frames = Array.prototype.slice.call(document.querySelectorAll(
       'iframe[src*="' + GHL_HOST + '"], iframe[data-src*="' + GHL_HOST + '"]'
     ));
     frames.forEach(normalizeFrame);
+    if (!frames.length) return;
 
-    // 1) cache-busted form_embed.js (auto-resizes the form iframes)
-    var embed = document.createElement("script");
-    embed.src = cacheBust("https://" + GHL_HOST + "/js/form_embed.js");
-    embed.async = true;
-    document.body.appendChild(embed);
-
-    // 2) per-iframe watchdog
-    function watch(iframe) {
-      var base = iframe.getAttribute("src") || iframe.getAttribute("data-src") || "";
-      if (!base || base.indexOf(GHL_HOST) === -1) return;
-
-      var loaded = false, attempts = 0, armed = false;
-      iframe.addEventListener("load", function () { loaded = true; });
-
-      function arm() {
-        if (armed || !iframe.src) return;   // wait until a src is actually set
-        armed = true;
-        setTimeout(function () {
-          if (loaded || attempts >= 2) return;
-          attempts++;
-          armed = false;
-          iframe.src = cacheBust(base); // force a fresh fetch
-          arm();
-        }, 6000);
-      }
-
-      if (iframe.src) { arm(); return; }
-      // lazily-loaded frames (e.g. the modal) get their src later — poll for it
-      var poll = setInterval(function () {
-        if (iframe.src) { clearInterval(poll); arm(); }
-      }, 400);
-      setTimeout(function () { clearInterval(poll); }, 60000);
+    var helperSrc = "https://" + GHL_HOST + "/js/form_embed.js";
+    var existing = document.querySelector('script[src^="' + helperSrc + '"]');
+    if (!existing) {
+      var embed = document.createElement("script");
+      embed.src = helperSrc;
+      embed.async = true;
+      document.body.appendChild(embed);
     }
-
-    frames.forEach(watch);
   })();
-
   /* ---- Cookie consent banner ---- */
   (function () {
     if (document.cookie.indexOf("cookieConsent=") !== -1) return;
