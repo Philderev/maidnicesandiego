@@ -97,10 +97,9 @@
       <section class="section section-pad" id="pricing">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Recurring Plans</p>
-            <h2>Recurring Cleaning Plans</h2>
-            <p class="sub">Pick a plan. Reclaim your weekends.</p>
-            <p class="desc">Recurring clients pay less per visit and get priority scheduling. Most clients start with one clean and never go back.</p>
+            <p class="eyebrow">RECURRING CLEANING PLANS</p>
+            <h2>Pick a plan. Reclaim your weekends.</h2>
+            <p class="sub">Most clients start with one clean and never go back. Recurring clients pay less and get priority scheduling.</p>
           </div>
         </div>
 
@@ -109,6 +108,7 @@
           <div class="price-card">
             <span class="freq">Every week</span>
             <h3 class="plan">Weekly Cleaning</h3>
+            <span class="price-prefix">Starting at</span>
             <div class="price">$169</div>
             <p class="note">Best for busy families</p>
             <ul>
@@ -117,14 +117,15 @@
               <li>Before &amp; after photos</li>
               <li>All supplies included</li>
             </ul>
-            <a class="btn btn-outline btn-block" href="#quote-form">Get Started Weekly <span class="arw">→</span></a>
+            <a class="btn btn-outline btn-block" href="#quote-form">Get Started &mdash; Takes 2 Min</a>
           </div>
 
           <!-- Bi-weekly (Most Popular) -->
           <div class="price-card featured">
-            <span class="price-tag-pop">Most Popular</span>
-            <span class="freq">Every 2 weeks</span>
-            <h3 class="plan">Every 2 Weeks</h3>
+            <span class="price-tag-pop">MOST POPULAR</span>
+            <span class="freq">Bi-Weekly</span>
+            <h3 class="plan">Bi-Weekly</h3>
+            <span class="price-prefix">Starting at</span>
             <div class="price">$189</div>
             <p class="note">Most popular plan</p>
             <ul>
@@ -133,13 +134,14 @@
               <li>Before &amp; after photos</li>
               <li>All supplies included</li>
             </ul>
-            <a class="btn btn-primary btn-block" href="#quote-form">Get Started Bi-Weekly <span class="arw">→</span></a>
+            <a class="btn btn-primary btn-block" href="#quote-form">Get Started &mdash; Takes 2 Min</a>
           </div>
 
           <!-- Monthly -->
           <div class="price-card">
             <span class="freq">Once a month</span>
             <h3 class="plan">Monthly Cleaning</h3>
+            <span class="price-prefix">Starting at</span>
             <div class="price">$218</div>
             <p class="note">Flexible, no commitment</p>
             <ul>
@@ -148,7 +150,7 @@
               <li>Before &amp; after photos</li>
               <li>All supplies included</li>
             </ul>
-            <a class="btn btn-outline btn-block" href="#quote-form">Get Started Monthly <span class="arw">→</span></a>
+            <a class="btn btn-outline btn-block" href="#quote-form">Get Started &mdash; Takes 2 Min</a>
           </div>
         </div>
 
@@ -243,6 +245,17 @@
     </footer>
 
   </div><!-- /.frame -->
+
+  <!-- quote popup modal (opened by non-call CTA buttons) -->
+  <div class="quote-modal" id="quoteModal" aria-hidden="true">
+    <div class="quote-modal__backdrop" data-close-modal></div>
+    <div class="quote-modal__dialog" role="dialog" aria-modal="true" aria-label="Get a free quote">
+      <button class="quote-modal__close" type="button" aria-label="Close" data-close-modal>&times;</button>
+      <div class="quote-modal__frame">
+        <iframe data-src="https://leadhubb.alegresolutionsgs.com/widget/form/9qJszNuNSBBikEL9qQDx" data-layout="{'id':'INLINE'}" data-form-id="9qJszNuNSBBikEL9qQDx" title="Get A Quote" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
 
   <script src="../script.js"></script>
 </body>
